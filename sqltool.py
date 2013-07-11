@@ -61,14 +61,14 @@ def restore_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpa
         print "Upgrade codebase before deploy"
 
 def dump_proc(cur, proc, **args):
-    cur.execute("""SHOW CREATE PROCEDURE %s""" % proc)
-    pdef = "DROP PROCEDURE IF EXISTS %s;\nDELIMITER $$\n" % proc + cur.fetchall()[0][2] + "\n$$"
+    cur.execute("""SHOW CREATE PROCEDURE `%s`""" % proc)
+    pdef = "DROP PROCEDURE IF EXISTS `%s`;\nDELIMITER $$\n" % proc + cur.fetchall()[0][2] + "\n$$"
     with open(args['prefix'] + "procs/%s.sql" % proc, "w") as f:
         f.write(pdef)
 
-def dump_fun(cur, fun, **_):
-    cur.execute("""SHOW CREATE FUNCTION %s""" % fun)
-    pdef = "DROP FUNCTION IF EXISTS %s;\nDELIMITER $$\n" % fun + cur.fetchall()[0][2] + "\n$$"
+def dump_fun(cur, fun, **args):
+    cur.execute("""SHOW CREATE FUNCTION `%s`""" % fun)
+    pdef = "DROP FUNCTION IF EXISTS `%s`;\nDELIMITER $$\n" % fun + cur.fetchall()[0][2] + "\n$$"
     with open(args['prefix'] + "funs/%s.sql" % fun, "w") as f:
         f.write(pdef)
 
