@@ -37,21 +37,21 @@ def apply_all(db, fun, objs, args):
         fun(cur, t, **args)
 
 def dump_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
-    os.system("mysqldump -h%s -u%s -p%s -d -r%stables/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
+    os.system("mysqldump -h%s -u%s -p%s -d -r%s/tables/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
     cur.execute("""DESCRIBE %s""" % table)
     fields = [f[0] for f in cur.fetchall()]
     cur.execute("""SELECT * FROM %s""" % table)
-    with open(args['prefix'] + "tables/%s.csv" % table, "w") as f:
+    with open(args['prefix'] + "/tables/%s.csv" % table, "w") as f:
         writer = csv.writer(f,lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
         writer.writerow(fields)
         writer.writerows(cur.fetchall())
 
 def dump_view(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
-    os.system("mysqldump -h%s -u%s -p%s -d -r%sviews/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
+    os.system("mysqldump -h%s -u%s -p%s -d -r%s/views/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
 
 def restore_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
     try:
-        os.system("mysql -h%s -u%s -p%s -D%s < %stables/%s.sql" %(host, user, passwd, database, args['prefix'], table))
+        os.system("mysql -h%s -u%s -p%s -D%s < %s/tables/%s.sql" %(host, user, passwd, database, args['prefix'], table))
         fname = "%s/tables/%s.csv" % (args['prefix'], table)
         with open(fname, 'r') as f:
             fields = ",".join([c for c in f.readline()[1:-2].split('","')])
@@ -63,18 +63,18 @@ def restore_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpa
 def dump_proc(cur, proc, **args):
     cur.execute("""SHOW CREATE PROCEDURE `%s`""" % proc)
     pdef = "DROP PROCEDURE IF EXISTS `%s`;\nDELIMITER $$\n" % proc + cur.fetchall()[0][2] + "\n$$"
-    with open(args['prefix'] + "procs/%s.sql" % proc, "w") as f:
+    with open(args['prefix'] + "/procs/%s.sql" % proc, "w") as f:
         f.write(pdef)
 
 def dump_fun(cur, fun, **args):
     cur.execute("""SHOW CREATE FUNCTION `%s`""" % fun)
     pdef = "DROP FUNCTION IF EXISTS `%s`;\nDELIMITER $$\n" % fun + cur.fetchall()[0][2] + "\n$$"
-    with open(args['prefix'] + "funs/%s.sql" % fun, "w") as f:
+    with open(args['prefix'] + "/funs/%s.sql" % fun, "w") as f:
         f.write(pdef)
 
 def restore(_cur, obj, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
     #try:
-        os.system("mysql -h%s -u%s -p%s -D%s < %ss/%s.sql" %(host, user, passwd, database, args['prefix'] + args['object'], obj))
+        os.system("mysql -h%s -u%s -p%s -D%s < %ss/%s.sql" %(host, user, passwd, database, args['prefix'] + '/' + args['object'], obj))
 
 
 
@@ -88,7 +88,7 @@ def arg_parser(args):
     argparser.add_argument('--user', '-u', type=str, default='root')
     argparser.add_argument('--passwd', '-p', type=str, default='yoursuperpasswd')
     argparser.add_argument('--database', '-d', type=str, default='test')
-    argparser.add_argument('--prefix', '-D', type=str, default='./db/')
+    argparser.add_argument('--prefix', '-D', type=str, default='./db')
     return argparser.parse_args(sys.argv[1:])
 
 if __name__ == '__main__':
@@ -96,6 +96,23 @@ if __name__ == '__main__':
     print args
     db = connect(host=args.host, user=args.user, passwd=args.passwd, db=args.database)
     if args.action == 'dump':
+        try:
+            os.mkdir(args.prefix + '/tables')
+        except OSError:
+            pass
+        try:
+            os.mkdir(args.prefix + '/views')
+        except OSError:
+            pass
+        try:
+            os.mkdir(args.prefix + '/funs')
+        except OSError:
+            pass
+        try:
+            os.mkdir(args.prefix + '/procs')
+        except OSError:
+            pass
+
         if args.object == 'all':
             apply_all(db, dump_table, tablelist(db), vars(args))
             apply_all(db, dump_view, viewlist(db), vars(args))
