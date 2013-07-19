@@ -146,33 +146,33 @@ if __name__ == '__main__':
 
     elif args.action == 'restore':
         if args.object == 'all':
-            apply_all(db, restore_table, filelist('./tables'), vars(args))
-            apply_all(db, restore, filelist('./views'), vars(args))
-            apply_all(db, restore, filelist('./procs'), vars(args))
-            apply_all(db, restore, filelist('./funs'), vars(args))
+            apply_all(db, restore_table, filelist(args.prefix + '/tables'), vars(args))
+            apply_all(db, restore, filelist(args.prefix + '/views'), vars(args))
+            apply_all(db, restore, filelist(args.prefix + '/procs'), vars(args))
+            apply_all(db, restore, filelist(args.prefix + '/funs'), vars(args))
         elif args.object == 'structure':
-            apply_all(db, restore, filelist('./tables'), vars(args))
-            apply_all(db, restore, filelist('./views'), vars(args))
-            apply_all(db, restore, filelist('./procs'), vars(args))
-            apply_all(db, restore, filelist('./funs'), vars(args))
+            apply_all(db, restore, filelist(args.prefix + '/tables'), vars(args))
+            apply_all(db, restore, filelist(args.prefix + '/views'), vars(args))
+            apply_all(db, restore, filelist(args.prefix + '/procs'), vars(args))
+            apply_all(db, restore, filelist(args.prefix + '/funs'), vars(args))
         elif args.object == 'table':
             if args.name == '*':
-                apply_all(db, restore_table, filelist('./tables'), vars(args))
+                apply_all(db, restore_table, filelist(args.prefix + '/tables'), vars(args))
             else:
                 apply_all(db, restore_table, [args.name], vars(args))
         elif args.object == 'proc':
             if args.name == '*':
-                apply_all(db, restore, filelist('./procs'), vars(args))
+                apply_all(db, restore, filelist(args.prefix + '/procs'), vars(args))
             else:
                 apply_all(db, restore, [args.name], vars(args))
         elif args.object == 'fun':
             if args.name == '*':
-                apply_all(db, restore, filelist('./funs'), vars(args))
+                apply_all(db, restore, filelist(args.prefix + '/funs'), vars(args))
             else:
                 apply_all(db, restore, [args.name], vars(args))
         elif args.object == 'view':
             if args.name == '*':
-                apply_all(db, restore, filelist('./views'), vars(args))
+                apply_all(db, restore, filelist(args.prefix + '/views'), vars(args))
             else:
                 apply_all(db, restore, [args.name], vars(args))
 
