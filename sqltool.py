@@ -146,14 +146,22 @@ if __name__ == '__main__':
 
     elif args.action == 'restore':
         if args.object == 'all':
+            args.object = 'table'
             apply_all(db, restore_table, filelist(args.prefix + '/tables'), vars(args))
+            args.object = 'view'
             apply_all(db, restore, filelist(args.prefix + '/views'), vars(args))
+            args.object = 'proc'
             apply_all(db, restore, filelist(args.prefix + '/procs'), vars(args))
+            args.object = 'fun'
             apply_all(db, restore, filelist(args.prefix + '/funs'), vars(args))
         elif args.object == 'structure':
+            args.object = 'table'
             apply_all(db, restore, filelist(args.prefix + '/tables'), vars(args))
+            args.object = 'view'
             apply_all(db, restore, filelist(args.prefix + '/views'), vars(args))
+            args.object = 'proc'
             apply_all(db, restore, filelist(args.prefix + '/procs'), vars(args))
+            args.object = 'fun'
             apply_all(db, restore, filelist(args.prefix + '/funs'), vars(args))
         elif args.object == 'table':
             if args.name == '*':
