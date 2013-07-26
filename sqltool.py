@@ -33,6 +33,7 @@ def viewlist(db):
 
 def apply_all(db, fun, objs, args):
     cur = db.cursor()
+    cur.execute("SET NAMES 'utf8'")
     for t in objs:
         fun(cur, t, **args)
 
