@@ -8,8 +8,8 @@ import os, shutil, argparse, sys, csv
 
 def tablelist(db):
     cur = db.cursor()
-    cur.execute("SHOW TABLES")
-    return [t for (t,) in cur.fetchall()]
+    cur.execute("SHOW FULL TABLES WHERE TABLE_TYPE LIKE 'BASE TABLE'")
+    return [t[0] for t in cur.fetchall()]
 
 def filelist(db):
     files = [f[0:-4] for f in os.listdir(db)]
@@ -35,6 +35,7 @@ def apply_all(db, fun, objs, args):
     cur = db.cursor()
     cur.execute("SET NAMES 'utf8'")
     for t in objs:
+        print t
         fun(cur, t, **args)
 
 def dump_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
