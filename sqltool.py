@@ -4,7 +4,7 @@
 
 from MySQLdb import connect
 from os.path import abspath
-import os, shutil, argparse, sys, csv
+import os, shutil, argparse, sys, csv, time
 
 def tablelist(db):
     cur = db.cursor()
@@ -39,14 +39,20 @@ def apply_all(db, fun, objs, args):
         fun(cur, t, **args)
 
 def dump_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
+    print time.localtime()
     os.system("mysqldump -h%s -u%s -p%s -d -r%s/tables/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
-    cur.execute("""DESCRIBE %s""" % table)
-    fields = [f[0] for f in cur.fetchall()]
-    cur.execute("""SELECT * FROM %s""" % table)
-    with open(args['prefix'] + "/tables/%s.csv" % table, "w") as f:
-        writer = csv.writer(f,lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow(fields)
-        writer.writerows(cur.fetchall())
+    print time.localtime()
+    if table not in args['ignore']:
+        cur.execute("""DESCRIBE %s""" % table)
+        fields = [f[0] for f in cur.fetchall()]
+        print time.localtime()
+        cur.execute("""SELECT * FROM %s""" % table)
+        with open(args['prefix'] + "/tables/%s.csv" % table, "w") as f:
+            writer = csv.writer(f,lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
+            writer.writerow(fields)
+            writer.writerows(cur.fetchall())
+            print time.localtime()
+
 
 def dump_view(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
     os.system("mysqldump -h%s -u%s -p%s -d -r%s/views/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
@@ -91,12 +97,18 @@ def arg_parser(args):
     argparser.add_argument('--passwd', '-p', type=str, default='yoursuperpasswd')
     argparser.add_argument('--database', '-d', type=str, default='test')
     argparser.add_argument('--prefix', '-D', type=str, default='./db')
-    return argparser.parse_args(sys.argv[1:])
+    argparser.add_argument('--ignore-file', '-i', type=argparse.FileType('r'))
+    return argparser.parse_args(args)
 
 if __name__ == '__main__':
     args = arg_parser(sys.argv[1:])
     print args
     db = connect(host=args.host, user=args.user, passwd=args.passwd, db=args.database)
+    if args.ignore_file != None:
+         args.ignore = [ l[:-1] for l in args.ignore_file]
+    else:
+         args.ignore = []
+    print args.ignore
     if args.action == 'dump':
         try:
             os.mkdir(args.prefix + '/tables')
