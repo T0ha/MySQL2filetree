@@ -39,19 +39,15 @@ def apply_all(db, fun, objs, args):
         fun(cur, t, **args)
 
 def dump_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
-    print time.localtime()
     os.system("mysqldump -h%s -u%s -p%s -d -r%s/tables/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
-    print time.localtime()
     if table not in args['ignore']:
         cur.execute("""DESCRIBE %s""" % table)
         fields = [f[0] for f in cur.fetchall()]
-        print time.localtime()
         cur.execute("""SELECT * FROM %s""" % table)
         with open(args['prefix'] + "/tables/%s.csv" % table, "w") as f:
             writer = csv.writer(f,lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
             writer.writerow(fields)
             writer.writerows(cur.fetchall())
-            print time.localtime()
 
 
 def dump_view(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
@@ -108,7 +104,6 @@ if __name__ == '__main__':
          args.ignore = [ l[:-1] for l in args.ignore_file]
     else:
          args.ignore = []
-    print args.ignore
     if args.action == 'dump':
         try:
             os.mkdir(args.prefix + '/tables')
