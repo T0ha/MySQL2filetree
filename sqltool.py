@@ -34,6 +34,7 @@ def viewlist(db):
 def apply_all(db, fun, objs, args):
     cur = db.cursor()
     cur.execute("SET NAMES 'utf8'")
+    cur.execute("SET sql_mode = NO_AUTO_VALUE_ON_ZERO")
     for t in objs:
         print t
         fun(cur, t, **args)
