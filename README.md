@@ -31,5 +31,6 @@ dump or restore (default - dump)
 - Python >= 2.6
 - MySQLdb (python-mysql or python2-mysql)
 - mysqldump (mysql-client)
+- 
 You are welcome with questions and suggestions.
 Please email Shvein Anton: t0hashvein@gmail.com
