@@ -40,7 +40,7 @@ def apply_all(db, fun, objs, args):
         fun(cur, t, **args)
 
 def dump_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
-    os.system("mysqldump -h%s -u%s -p%s -d -r%s/tables/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
+    os.system("mysqldump --skip-comments -h%s -u%s -p%s -d -r%s/tables/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
     if table not in args['ignore']:
         cur.execute("""DESCRIBE %s""" % table)
         fields = [f[0] for f in cur.fetchall()]
@@ -52,7 +52,7 @@ def dump_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpassw
 
 
 def dump_view(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
-    os.system("mysqldump -h%s -u%s -p%s -d -r%s/views/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
+    os.system("mysqldump --skip-comments -h%s -u%s -p%s -d -r%s/views/%s.sql %s %s" % (host, user, passwd, args['prefix'], table, database, table))
 
 def restore_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpasswd", database="test", **args):
     try:
