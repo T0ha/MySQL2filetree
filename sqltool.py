@@ -129,7 +129,8 @@ if __name__ == '__main__':
             apply_all(db, dump_proc, proclist(db, args.database), vars(args))
             apply_all(db, dump_fun, funlist(db, args.database), vars(args))
         elif args.object == 'structure':
-            apply_all(db, dump_view, tablelist(db), vars(args))
+            args.ignore = tablelist(db)
+            apply_all(db, dump_table, tablelist(db), vars(args))
             apply_all(db, dump_view, viewlist(db), vars(args))
             apply_all(db, dump_proc, proclist(db, args.database), vars(args))
             apply_all(db, dump_fun, funlist(db, args.database), vars(args))
