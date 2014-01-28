@@ -27,5 +27,9 @@ dump or restore (default - dump)
 - `-D` or `--prefix` - path to structure files (default: ./db/)
 - `-i` or `--ignore-file` - path to file with list of tables data from which shouldn't be imported (each table name should be a newline with empty line before EOF
 
+#### Dependenses:
+- Python >= 2.6
+- MySQLdb (python-mysql or python2-mysql)
+- mysqldump (mysql-client)
 You are welcome with questions and suggestions.
 Please email Shvein Anton: t0hashvein@gmail.com
