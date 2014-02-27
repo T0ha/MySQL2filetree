@@ -61,7 +61,8 @@ def restore_table(cur, table, host="127.0.0.1", user="root", passwd="yoursuperpa
         with open(fname, 'r') as f:
             fields = ",".join([c for c in f.readline()[1:-2].split('","')])
             cur.execute("""LOAD DATA LOCAL INFILE '%s' INTO TABLE %s FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '\' IGNORE 1 LINES (%s)""" % (abspath(fname), table, fields))
-    except:
+    except Exception, e:
+        print "Error: %s" % e
         print "Not all tables restored"
         print "Upgrade codebase before deploy"
 
