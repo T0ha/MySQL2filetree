@@ -101,7 +101,7 @@ def arg_parser(args):
 if __name__ == '__main__':
     args = arg_parser(sys.argv[1:])
     print args
-    db = connect(host=args.host, user=args.user, passwd=args.passwd, db=args.database)
+    db = connect(host=args.host, user=args.user, passwd=args.passwd, db=args.database, local_infile=1)
     if args.ignore_file != None:
          args.ignore = [ l[:-1] for l in args.ignore_file]
     else:
